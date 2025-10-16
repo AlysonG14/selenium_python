@@ -1,6 +1,5 @@
-from selenium import webdriver 
-from selenium.webdriver.common import By
-
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service # Importa a classe servide
 # selenium -> Ele permite que controla o navegador
 # time -> Importa tempo para adicionar pausas (sleep())
 
@@ -9,7 +8,7 @@ import time
 # Cria uma classe principal que define todo o jogo
 class CookieClicker:
     def __init__(self):
-        self.SITE_LINK = "https://orteil.dashnet.org/cookieclicker/" # define o link do jogo
+        self.SITE_LINK = "https://www.google.com/" # define o link do jogo
         self.SITE_MAP = {
             "buttons": {
                 "xpath": '//*[@id="bigCookie"]'
@@ -18,7 +17,9 @@ class CookieClicker:
                 "xpath": "//*[@id='product$$NUMBER$$']"
             }
         } # Cria um dicionário vazio para armazenar XPaths do elementos da página
-        self.driver = webdriver.Chrome(executable_path="C:\\Users\\ct67ca\\Desktop\\selenium_python\\chromedriver.exe") # Inicializa o ChromeDriver (controlar o navegador Chrome via Selenium)
+        # Usando o Service para especificar o caminho do chromedriver
+        service = Service(executable_path="C:\\Users\\dsadm\\Desktop\\Desktop\\selenium\\chromedriver.exe")
+        self.driver = webdriver.Chrome(service=service) # Inicializa o ChromeDriver (controlar o navegador Chrome via Selenium, passando para o service)
         self.driver.maximize_window()
 
     # Vai permitir abrir o site
@@ -42,7 +43,7 @@ class CookieClicker:
         while not encontrei:
             objeto = self.SITE_MAP["buttons"]["upgrade"]["xpath"].replace("$NUMBER$$", str(elemento_atual)) 
             classes_objetos = self.driver.find_element_by_xpath(objeto).get_attribute("class")
-
+            
             if not "enable" in classes_objetos: # Se não tiver "enable":, o botão está desativado, então o anterior era o melhor possível
                 encontrei = True
             else: 
@@ -57,13 +58,15 @@ class CookieClicker:
     
 biscoito = CookieClicker()
 biscoito.abrir_site()
+    
+# Incrementa o i para que o loop infinito aconteca e clica automático sem parar
 
 i = 0
 
-while True:
-    if i % 500 == 0 and i != 0:
+while True: # Usando o while true
+    if i % 500 == 0 and i != 0: # uma lógica que a cada 500 cliques, o script faz uma pausa, compra um upgrade (se for possível) e retorna ao ciclos de cliques
         time.sleep(1)
         biscoito.comprar_upgrade()
         time.sleep(1)
     biscoito.clicar_no_cookie()
-    i += 1
+    i += 1 # Incrementa o próximo clique repetidamente
